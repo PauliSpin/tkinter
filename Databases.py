@@ -62,8 +62,9 @@ def query():
 
     print_records = ''
     for record in records:
-        print_records += str(record) + "\n"
-        # print_records += str(record[0]) + "\n" # First names only
+        # print_records += str(record) + "\n"
+        print_records += str(record[0]) + ' ' + str(record[1]) + ' ' + '\t' + \
+            str(record[6]) + "\n"  # First names only
 
     query_label = tk.Label(root, text=print_records)
     query_label.grid(row=8, column=0, columnspan=2)
@@ -103,7 +104,7 @@ c.execute("""CREATE TABLE addresses (
 '''
 # Create text boxes
 f_name = tk.Entry(root, width=30)
-f_name.grid(row=0, column=1, padx=20)
+f_name.grid(row=0, column=1, padx=20, pady=(10, 0))
 
 l_name = tk.Entry(root, width=30)
 l_name.grid(row=1, column=1)
@@ -122,7 +123,7 @@ zipcode.grid(row=5, column=1)
 
 # Create text box labels
 f_name_label = tk.Label(root, text='First Name')
-f_name_label.grid(row=0, column=0)
+f_name_label.grid(row=0, column=0, pady=(10, 0))
 
 l_name_label = tk.Label(root, text='Last Name')
 l_name_label.grid(row=1, column=0)
