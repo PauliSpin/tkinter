@@ -2,8 +2,9 @@ import tkinter as tk
 from PIL import ImageTk, Image
 import sqlite3      # Inbuilt simple DB
 
-
 # Create function to Delete a record
+
+
 def delete():
     # Create a database or connect to one
     # Creates address_book.db if it does not already exist
@@ -25,6 +26,122 @@ def delete():
     conn.commit()
 
     # Close DB Connection
+    conn.close()
+
+# Create Update function:
+
+
+def update():
+    conn = sqlite3.connect('address_book.db')
+    c = conn.cursor()
+
+    record_oid = delete_box.get()
+
+    c.execute("""
+              UPDATE addresses SET 
+              first_name = :first,
+              last_name = :last,
+              address = :address,
+              city = :city,
+              state = :state,
+              zipcode = :zipcode
+              
+              WHERE oid = :oid""",
+              {
+                  'first': f_name_editor.get(),
+                  'last': l_name_editor.get(),
+                  'address': address_editor.get(),
+                  'city': city_editor.get(),
+                  'state': state_editor.get(),
+                  'zipcode': zipcode_editor.get(),
+                  'oid': record_oid
+              }
+
+              )
+
+    conn.commit()
+    conn.close()
+
+    editor.destroy()
+
+# Create an Edit Function
+
+
+def edit():
+
+    global editor
+
+    editor = tk.Tk()
+    editor.title('Edit a Record')
+    editor.iconbitmap('Chili_Pepper_icon.ico')
+    editor.geometry('400x190')
+
+    conn = sqlite3.connect('address_book.db')
+    c = conn.cursor()
+
+    record_id = delete_box.get()
+    c.execute("SELECT * FROM addresses WHERE oid = " + record_id)
+    records = c.fetchall()
+
+    global f_name_editor
+    global l_name_editor
+    global address_editor
+    global city_editor
+    global state_editor
+    global zipcode_editor
+
+    # Create text boxes
+    f_name_editor = tk.Entry(editor, width=30)
+    f_name_editor.grid(row=0, column=1, padx=20, pady=(10, 0))
+
+    l_name_editor = tk.Entry(editor, width=30)
+    l_name_editor.grid(row=1, column=1)
+
+    address_editor = tk.Entry(editor, width=30)
+    address_editor.grid(row=2, column=1)
+
+    city_editor = tk.Entry(editor, width=30)
+    city_editor.grid(row=3, column=1)
+
+    state_editor = tk.Entry(editor, width=30)
+    state_editor.grid(row=4, column=1)
+
+    zipcode_editor = tk.Entry(editor, width=30)
+    zipcode_editor.grid(row=5, column=1)
+
+    # Create text box labels
+    f_name_label = tk.Label(editor, text='First Name')
+    f_name_label.grid(row=0, column=0, pady=(10, 0))
+
+    l_name_label = tk.Label(editor, text='Last Name')
+    l_name_label.grid(row=1, column=0)
+
+    address_label = tk.Label(editor, text='Address')
+    address_label.grid(row=2, column=0)
+
+    city_label = tk.Label(editor, text='City')
+    city_label.grid(row=3, column=0)
+
+    state_label = tk.Label(editor, text='State')
+    state_label.grid(row=4, column=0)
+
+    zipcode_label = tk.Label(editor, text='Zipcode')
+    zipcode_label.grid(row=5, column=0)
+
+    # Loop through results
+    for record in records:
+        f_name_editor.insert(0, record[0])
+        l_name_editor.insert(0, record[1])
+        address_editor.insert(0, record[2])
+        city_editor.insert(0, record[3])
+        state_editor.insert(0, record[4])
+        zipcode_editor.insert(0, record[5])
+
+    # Create an Save Button To Save Edited Record
+    edit_btn = tk.Button(editor, text="Save Record", command=update)
+    edit_btn.grid(row=6, column=0, columnspan=2, pady=10, padx=10, ipadx=145)
+
+    conn.commit()
     conn.close()
 
 # Create Submit Function For Database
@@ -83,7 +200,7 @@ def query():
             str(record[6]) + "\n"  # First names only
 
     query_label = tk.Label(root, text=print_records)
-    query_label.grid(row=11, column=0, columnspan=2)
+    query_label.grid(row=12, column=0, columnspan=2)
 
     conn.commit()
     conn.close()
@@ -158,7 +275,7 @@ state_label.grid(row=4, column=0)
 zipcode_label = tk.Label(root, text='Zipcode')
 zipcode_label.grid(row=5, column=0)
 
-delete_box_label = tk.Label(root, text='Delete ID')
+delete_box_label = tk.Label(root, text='Select ID')
 delete_box_label.grid(row=9, column=0, pady=5)
 
 # Create Submit Button
@@ -172,5 +289,9 @@ query_btn.grid(row=7, column=0, columnspan=2, pady=10, padx=10, ipadx=135)
 # Create a Delete Button
 delete_btn = tk.Button(root, text="Delete Record", command=delete)
 delete_btn.grid(row=10, column=0, columnspan=2, pady=10, padx=10, ipadx=135)
+
+# Create an Update Button
+edit_btn = tk.Button(root, text="Edit Record", command=edit)
+edit_btn.grid(row=11, column=0, columnspan=2, pady=10, padx=10, ipadx=145)
 
 root.mainloop()
