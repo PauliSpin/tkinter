@@ -28,8 +28,8 @@ def delete():
     # Close DB Connection
     conn.close()
 
-# Create Update function:
 
+# Create Update function
 
 def update():
     conn = sqlite3.connect('address_book.db')
