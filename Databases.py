@@ -3,14 +3,35 @@ from PIL import ImageTk, Image
 import sqlite3      # Inbuilt simple DB
 
 
-# Create Submit Function For Database
-def submit():
-
+# Create function to Delete a record
+def delete():
     # Create a database or connect to one
     # Creates address_book.db if it does not already exist
     conn = sqlite3.connect('address_book.db')
 
     # Create cursor
+    c = conn.cursor()
+
+    # Delete a Record
+    # c.execute("DELETE from addresses WHERE f_name='John'")
+    #   This would delete EVERY record where the f_name is 'John'
+    # The above line would delete
+    c.execute("DELETE from addresses WHERE oid=" + delete_box.get())
+    # Note that in the DB itself, oid is an integer but in the line above,
+    # tkinter doesn't mind and converts it to a str before concatenating '+'
+
+    # Any time you make a change to the database, you have to commit it
+    # Commit Changes
+    conn.commit()
+
+    # Close DB Connection
+    conn.close()
+
+# Create Submit Function For Database
+
+
+def submit():
+    conn = sqlite3.connect('address_book.db')
     c = conn.cursor()
 
     # Insert into the table
@@ -26,11 +47,7 @@ def submit():
                   'zipcode': zipcode.get()
               })
 
-    # Any time you make a change to the database, you have to commit it
-    # Commit Changes
     conn.commit()
-
-    # Close DB Connection
     conn.close()
 
     # Clear the text boxes
@@ -45,9 +62,8 @@ def submit():
 
 
 def query():
-    # Create a database or connect to one
+
     conn = sqlite3.connect('address_book.db')
-    # Create cursor
     c = conn.cursor()
 
     # Query the Database
@@ -67,10 +83,9 @@ def query():
             str(record[6]) + "\n"  # First names only
 
     query_label = tk.Label(root, text=print_records)
-    query_label.grid(row=8, column=0, columnspan=2)
-    # Commit Changes
+    query_label.grid(row=11, column=0, columnspan=2)
+
     conn.commit()
-    # Close DB Connection
     conn.close()
 
 
@@ -121,6 +136,9 @@ state.grid(row=4, column=1)
 zipcode = tk.Entry(root, width=30)
 zipcode.grid(row=5, column=1)
 
+delete_box = tk.Entry(root, width=30)
+delete_box.grid(row=9, column=1, pady=5)
+
 # Create text box labels
 f_name_label = tk.Label(root, text='First Name')
 f_name_label.grid(row=0, column=0, pady=(10, 0))
@@ -140,12 +158,19 @@ state_label.grid(row=4, column=0)
 zipcode_label = tk.Label(root, text='Zipcode')
 zipcode_label.grid(row=5, column=0)
 
+delete_box_label = tk.Label(root, text='Delete ID')
+delete_box_label.grid(row=9, column=0, pady=5)
+
 # Create Submit Button
 submit_btn = tk.Button(root, text='Add Record to Database', command=submit)
-submit_btn.grid(row=6, column=0, columnspan=2, pady=10, padx=10, ipadx=100)
+submit_btn.grid(row=6, column=0, columnspan=2, pady=10, padx=10, ipadx=108)
 
 # Create a Query Button
 query_btn = tk.Button(root, text="Show Records", command=query)
-query_btn.grid(row=7, column=0, columnspan=2, pady=10, padx=10, ipadx=137)
+query_btn.grid(row=7, column=0, columnspan=2, pady=10, padx=10, ipadx=135)
+
+# Create a Delete Button
+delete_btn = tk.Button(root, text="Delete Record", command=delete)
+delete_btn.grid(row=10, column=0, columnspan=2, pady=10, padx=10, ipadx=135)
 
 root.mainloop()
