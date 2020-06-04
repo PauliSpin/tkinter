@@ -15,7 +15,7 @@ class DigitalClock(object):
         self.display_time()
 
     def display_time(self):
-        self.current_time = tm.strftime('%H:%M:%S')
+        self.current_time = tm.strftime('%I:%M:%S %p')  # '%H:%M:%S'
         self.clock_label['text'] = self.current_time
         self.the_window.after(200, self.display_time)
 
@@ -24,6 +24,7 @@ my_window = tk.Tk()
 my_other_window = tk.Tk()
 
 my_digital_clock = DigitalClock(my_window, 'black', 'red')
-my_digital_clock = DigitalClock(my_other_window, 'black', 'green')
+my_digital_clock = DigitalClock(
+    my_other_window, 'black', 'green')
 
 my_window.mainloop()
