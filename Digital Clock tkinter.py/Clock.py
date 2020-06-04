@@ -17,7 +17,8 @@ class DigitalClock(object):
     def display_time(self):
         self.current_time = tm.strftime('%I:%M:%S %p')  # '%H:%M:%S'
         self.clock_label['text'] = self.current_time
-        self.the_window.after(200, self.display_time)
+        # Create an event in the_window that will trigger in 200 ms
+        self.the_window.after(200, self.display_time)   # Function ends here
 
 
 my_window = tk.Tk()
@@ -28,3 +29,5 @@ my_digital_clock = DigitalClock(
     my_other_window, 'black', 'green')
 
 my_window.mainloop()
+# Main Loop will have an event triggered by the_window.after line above.
+# This will call the display_time function
